@@ -260,7 +260,7 @@
             <p>Escribe un nombre por línea. Mínimo 2 jugadores.</p>
             
             <div class="lock-overlay">🔒 Modo lectura: Pulsa el candado para editar</div>
-            <textarea id="playersInput" class="editable-element" placeholder="Juan García&#10;María López&#10;Carlos Ruiz..."></textarea>
+            <textarea id="playersInput" class="editable-element" placeholder="Nombre 1&#10;Nombre 2&#10;Nombre 3..."></textarea>
             
             <button class="editable-element" onclick="confirmStartTournament()">Crear / Actualizar Torneo</button>
         </div>
@@ -450,7 +450,7 @@
                 // pero la ejecución en la hoja se realiza correctamente.
                 console.log(`Intento ${i+1}: Petición enviada.`);
                 
-                showToast(`✅ Datos guardados correctamente`);
+                showToast(`✅ Resultados guardados`);
                 
                 // Esperamos 2 segundos y refrescamos los datos para confirmar
                 setTimeout(fetchFromGoogle, 2000);
@@ -978,4 +978,3 @@
 
 </body>
 </html>
-
