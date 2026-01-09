@@ -283,6 +283,15 @@
     function confirmResetTournament() { if(!isAdmin) return; openConfirmModal("¡ATENCIÓN!", "¿Seguro que quieres borrar todo el torneo? Esta acción no se puede deshacer.", "reset"); }
     function openConfirmModal(t, m, a) { document.getElementById('confirmTitle').innerText=t; document.getElementById('confirmMessage').innerText=m; pendingAction=a; document.getElementById('confirmModal').style.display="flex"; }
     
+    // Barajado profesional Fisher-Yates
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     function generateRoundRobin(players) {
         const n = players.length;
         const isOdd = n % 2 !== 0;
@@ -300,6 +309,7 @@
                     matches.push({
                         id: `m_${round}_${i}`,
                         round: round,
+                        // ESTA LÍNEA GARANTIZA LA ALTERNANCIA DE COLORES:
                         player1Id: round % 2 === 0 ? p2.id : p1.id,
                         player2Id: round % 2 === 0 ? p1.id : p2.id,
                         result: ""
@@ -314,15 +324,18 @@
     function closeConfirmModal(c) { 
         document.getElementById('confirmModal').style.display="none"; 
         if(c && pendingAction === 'start') {
-            const names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
+            let names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
             if(names.length < 2) { showToast("Mínimo 2 jugadores"); return; }
             
-            // --- CORRECCIÓN APLICADA: SORTEO ALEATORIO ---
-            names.sort(() => Math.random() - 0.5);
-            // ---------------------------------------------
-
+            // 1. Aleatoriedad total:
+            names = shuffleArray(names);
+            
+            // 2. Creación de jugadores con IDs fijos:
             const players = names.map((name, index) => ({ id: index + 1, name: name }));
+            
+            // 3. Generación con alternancia de colores automática:
             const matches = generateRoundRobin(players);
+            
             sendGoogleAction('create', { players: players, matches: matches });
         }
         if(c && pendingAction === 'reset') sendGoogleAction('reset');
