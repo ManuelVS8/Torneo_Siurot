@@ -20,9 +20,9 @@
         }
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { margin: 0; padding: 0; background-color: var(--secondary); color: var(--text); padding-bottom: 80px; }
-        header { background-color: var(--primary); color: white; padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
-        .header-text { text-align: left; flex: 1; }
-        h1 { margin: 0; font-size: 1.3rem; }
+        header { background-color: var(--primary); color: white; padding:1rem; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
+        .header-text { text-align: left; flex:1; }
+        h1 { margin: 0; font-size:1.3rem; }
         .subtitle { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; font-weight: normal; }
         #adminBtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 10px; flex-shrink: 0; }
         #adminBtn.unlocked { background-color: var(--success); border-color: var(--success); }
@@ -39,7 +39,7 @@
         button:active { transform: scale(0.98); }
         button.export { background-color: var(--success); }
         button.danger { background-color: var(--danger); }
-        .match-card { display: flex; flex-direction: column; background: var(--card-bg); border-radius: 8px; padding: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent); position: relative; }
+        .match-card { display: flex; flex-direction: column; background: var(--card-bg); border-radius: 8px; padding: 10px; margin-bottom: 12px; border-left:4px solid var(--accent); position: relative; }
         .match-header { font-size: 0.8rem; color: var(--light-text); margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
         .players { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .player-name { font-weight: 600; flex:1; transition: color 0.3s ease; }
@@ -137,7 +137,7 @@
 <div id="toast"></div>
 
 <script>
-    /* SISTEMA NUCLEAR ANTI-CACHÉ
+    /* SISTEMA NUCLEAR ANTI-CACHÉ (V2.0)
        Detecta cambios en el código y fuerza una recarga ignorando el Service Worker y la caché.
     */
     (function() {
@@ -145,8 +145,8 @@
         function calculateHash() {
             const content = document.documentElement.innerHTML.replace(/<script.*?>.*?<\/script>/gs, "");
             let h = 0;
-            for (let i = 0; i < content.length; i++) {
-                h = ((h << 5) - h) + content.charCodeAt(i);
+            for (let i=0; i < content.length; i++) {
+                h = ((h <<5) - h) + content.charCodeAt(i);
                 h |= 0;
             }
             return h.toString();
@@ -166,7 +166,10 @@
             // Borramos cachés del navegador (Service Worker API)
             if ('caches' in window) {
                 caches.keys().then(names => {
-                    for (let name of names) caches.delete(name);
+                    for (let name of names) {
+                        // Borramos todas las cachés
+                        caches.delete(name);
+                    }
                 });
             }
 
@@ -174,6 +177,7 @@
             const cleanUrl = window.location.origin + window.location.pathname + "?update=" + Date.now();
             window.location.replace(cleanUrl);
         } else {
+            // Si no hay cambios, aseguramos que guardamos el hash actual
             localStorage.setItem('siurot_v_hash', currentHash);
         }
 
@@ -182,8 +186,9 @@
         window.fetch = function(...args) {
             let url = args[0];
             if (typeof url === 'string' && !url.includes('nocache=')) {
-                const sep = url.includes('?') ? '&' : '?';
-                url += sep + 'nocache=' + Date.now();
+                const separator = url.includes('?') ? '&' : '?';
+                // Añadimos un número aleatorio (timestamp) para que sea una URL única siempre
+                url = url + separator + 'nocache=' + Date.now();
                 args[0] = url;
             }
             return originalFetch.apply(this, args);
