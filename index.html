@@ -283,14 +283,6 @@
     function confirmResetTournament() { if(!isAdmin) return; openConfirmModal("¡ATENCIÓN!", "¿Seguro que quieres borrar todo el torneo? Esta acción no se puede deshacer.", "reset"); }
     function openConfirmModal(t, m, a) { document.getElementById('confirmTitle').innerText=t; document.getElementById('confirmMessage').innerText=m; pendingAction=a; document.getElementById('confirmModal').style.display="flex"; }
     
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
     function generateRoundRobin(players) {
         const n = players.length;
         const isOdd = n % 2 !== 0;
@@ -322,9 +314,13 @@
     function closeConfirmModal(c) { 
         document.getElementById('confirmModal').style.display="none"; 
         if(c && pendingAction === 'start') {
-            let names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
+            const names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
             if(names.length < 2) { showToast("Mínimo 2 jugadores"); return; }
-            names = shuffleArray(names);
+            
+            // --- CORRECCIÓN APLICADA: SORTEO ALEATORIO ---
+            names.sort(() => Math.random() - 0.5);
+            // ---------------------------------------------
+
             const players = names.map((name, index) => ({ id: index + 1, name: name }));
             const matches = generateRoundRobin(players);
             sendGoogleAction('create', { players: players, matches: matches });
