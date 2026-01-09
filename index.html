@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>Ajedrez Siurot</title>
     <link rel="icon" href="https://raw.githubusercontent.com/ManuelVS8/Torneo_Ajedrez_Siurot/refs/heads/main/Ajedrez.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -133,13 +137,16 @@
 <div id="toast"></div>
 
 <script>
+    // Versión actual del script para forzar actualización de caché
+    const APP_VERSION = "1.2"; 
     const ADMIN_PASS = "bejherro";
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeRMzVOAm3h6qE7bqoVy2P7_g1NmkGxhImqqW0Z3mAIkgF5Fr0V_AODKf2o4ciPOZO/exec";
+    // El parámetro ?v= asegura que Google Script no use una versión vieja en caché
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeRMzVOAm3h6qE7bqoVy2P7_g1NmkGxhImqqW0Z3mAIkgF5Fr0V_AODKf2o4ciPOZO/exec?v=" + APP_VERSION;
+    
     let isAdmin = false, appData = { players: [], matches: [], started: false }, currentRound = 1, pendingAction = null;
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchFromGoogle();
-        // Listener para la tecla Enter en el input de contraseña
         document.getElementById('pwdInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') checkPassword();
         });
@@ -148,7 +155,7 @@
     async function fetchFromGoogle() {
         showLoading("Sincronizando con la nube...");
         try {
-            const res = await fetch(`${SCRIPT_URL}?action=read&t=${Date.now()}`);
+            const res = await fetch(`${SCRIPT_URL}&action=read&t=${Date.now()}`);
             const data = await res.json();
             if (data.db) appData = data.db;
             renderUI();
@@ -162,19 +169,17 @@
         try {
             const res = await fetch(SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors', // En algunos casos ayuda con la caché de POST
                 body: JSON.stringify({
                     action: 'sync',
                     matches: appData.matches,
                     players: appData.players
                 })
             });
-            const data = await res.json();
-            if (data.status === 'success') { 
-                appData = data.db; 
-                showToast("✅ Resultados guardados con éxito"); 
-                renderUI(); 
-            }
-        } catch (e) { showToast("❌ Error al guardar. Inténtalo de nuevo."); }
+            // Debido a no-cors o redirecciones, re-sincronizamos lectura para confirmar
+            setTimeout(fetchFromGoogle, 1000);
+            showToast("✅ Petición de guardado enviada");
+        } catch (e) { showToast("❌ Error al guardar."); }
         finally { hideLoading(); }
     }
 
@@ -350,35 +355,23 @@
         if(c && pendingAction === 'reset') sendGoogleAction('reset');
     }
 
-    // PDF DE CLASIFICACIÓN CORREGIDO
     function downloadPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
-        // Cabecera
         doc.setFontSize(18);
         doc.text("Clasificación Final - Ajedrez Siurot", 15, 20);
         doc.setFontSize(10);
         doc.text("Fecha: " + new Date().toLocaleDateString(), 15, 28);
-        
         let y = 45;
-        
-        // Configuración de Columnas (Coordenadas X fijas)
-        const colPos = 15;
-        const colName = 30;
-        const colPts = 120;
-        const colBH = 150;
-
+        const colPos = 15, colName = 30, colPts = 120, colBH = 150;
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
         doc.text("Pos", colPos, y);
         doc.text("Jugador", colName, y);
         doc.text("Pts", colPts, y);
         doc.text("BH", colBH, y);
-        
         doc.line(15, y + 2, 195, y + 2);
         y += 10;
-
         doc.setFont(undefined, 'normal');
         calculateRanking().forEach((p, i) => { 
             doc.text((i + 1).toString(), colPos, y);
@@ -388,17 +381,13 @@
             y += 8;
             if(y > 275) { doc.addPage(); y = 20; }
         });
-
-        // Añadir resultados de rondas
         y += 10;
         if(y > 250) { doc.addPage(); y = 20; }
-        
         doc.setFont(undefined, 'bold');
         doc.text("Resultados de las Rondas Jugadas", 15, y);
         y += 10;
         doc.setFont(undefined, 'normal');
         doc.setFontSize(10);
-
         const rounds = [...new Set(appData.matches.map(m => m.round))].sort((a,b) => a-b);
         rounds.forEach(r => {
             const roundMatches = appData.matches.filter(m => m.round === r && m.result);
@@ -417,23 +406,18 @@
                 y += 4;
             }
         });
-
         doc.save("Clasificacion_Ajedrez_Siurot.pdf");
     }
 
-    // NUEVO: PDF DE EMPAREJAMIENTOS
     function downloadMatchesPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
         doc.setFontSize(18);
         doc.text("Emparejamientos - Ajedrez Siurot", 15, 20);
         doc.setFontSize(10);
         doc.text("Nota: El primer jugador de cada mesa lleva BLANCAS y es responsable del tablero.", 15, 28);
-        
         let y = 40;
         const rounds = [...new Set(appData.matches.map(m => m.round))].sort((a,b) => a-b);
-        
         rounds.forEach(r => {
             if(y > 240) { doc.addPage(); y = 20; }
             doc.setFontSize(14);
@@ -442,15 +426,12 @@
             doc.rect(15, y, 180, 8, 'F');
             doc.text(`RONDA ${r}`, 20, y + 6);
             y += 15;
-            
             doc.setFontSize(11);
             doc.setFont(undefined, 'normal');
-            
             let mesa = 1;
             appData.matches.filter(m => m.round === r).forEach(m => {
                 const p1 = appData.players.find(p => p.id === m.player1Id).name;
                 const p2 = appData.players.find(p => p.id === m.player2Id).name;
-                
                 doc.text(`Mesa ${mesa}:`, 15, y);
                 doc.setFont(undefined, 'bold');
                 doc.text(p1, 35, y);
@@ -458,14 +439,12 @@
                 doc.text(" (B)  vs  ", 85, y);
                 doc.text(p2, 110, y);
                 doc.text(" (N)", 175, y);
-                
                 y += 8;
                 mesa++;
                 if(y > 280) { doc.addPage(); y = 20; }
             });
             y += 10;
         });
-        
         doc.save("Emparejamientos_Torneo_Siurot.pdf");
     }
 </script>
