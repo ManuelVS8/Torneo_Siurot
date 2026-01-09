@@ -35,7 +35,7 @@
         .lock-overlay { display: none; text-align: center; color: var(--danger); padding: 10px; font-weight: bold; font-size: 0.9rem; background: rgba(255,255,255,0.9); border-radius: 5px; margin-bottom: 10px; }
         body.is-locked .show-lock-msg .lock-overlay { display: block; }
         textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 5px; resize: vertical; font-size: 16px; }
-        button { background-color: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: background 0.2s; }
+        button { background-color: var(--primary); color: white; border: none; padding: 12px 20px; border-radius:5px; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: background 0.2s; }
         button:active { transform: scale(0.98); }
         button.export { background-color: var(--success); }
         button.danger { background-color: var(--danger); }
@@ -53,55 +53,54 @@
         th { background-color: var(--primary); color: white; font-size: 0.9rem; }
         .points-col { text-align: right; font-weight: bold; color: var(--accent); }
         .rank-col { width: 40px; text-align: center; color: var(--light-text); font-weight: bold; }
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-buttons { display: flex; gap: 10px; }
+        #pwdModal input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border); border-radius: 5px; }
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 300; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); z-index: 99; }
         .nav-item { text-align: center; color: var(--light-text); font-size: 0.75rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
         .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
+        .round-selector { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 15px; }
+        .round-chip { background: #eee; color: #555; padding: 5px 15px; border-radius: 20px; white-space: nowrap; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .round-chip.has-results { background-color: var(--round-done); color: var(--round-done-text); border: 1px solid var(--round-done-text); }
+        .round-chip.active { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
         #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 60px; opacity: 0;} to {bottom: 90px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 60px; opacity: 0;} }
-        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 300; justify-content: center; align-items: center; flex-direction: column; }
-        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .round-selector { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 15px; }
-        .round-chip { background: #eee; color: #555; padding: 5px 15px; border-radius: 20px; white-space: nowrap; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
-        .round-chip.active { background: var(--accent) !important; color: white !important; }
-        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
     </style>
 </head>
 <body class="is-locked">
-
-<div id="loadingOverlay"><div class="spinner"></div><div id="loadingText">Cargando aplicación...</div></div>
-
+<div id="loadingOverlay"><div class="spinner"></div><div id="loadingText">Conectando...</div></div>
 <header>
     <div class="header-text"><h1>Ajedrez Siurot</h1><div class="subtitle">Torneo CEIP Manuel Siurot 2026</div></div>
     <button id="adminBtn" onclick="openPasswordModal()">🔒</button>
 </header>
-
 <div class="container">
     <div id="tab-setup" class="tab-content active">
         <div class="card show-lock-msg">
-            <h3>1. Registro de Jugadores</h3>
-            <div class="lock-overlay">🔒 Modo lectura</div>
-            <textarea id="playersInput" class="editable-element" placeholder="Un nombre por línea..."></textarea>
-            <button class="editable-element" onclick="confirmStartTournament()">Crear Calendario</button>
+            <h3>1. Registro de Jugadores</h3><p>Introduce un nombre por línea. El sistema generará el calendario automáticamente.</p>
+            <div class="lock-overlay">🔒 Modo lectura: Pulsa el candado para editar</div>
+            <textarea id="playersInput" class="editable-element" placeholder="Ejemplo:&#10;Juan Pérez&#10;María García..."></textarea>
+            <button class="editable-element" onclick="confirmStartTournament()">Crear / Actualizar Torneo</button>
         </div>
         <div class="card show-lock-msg" id="resetCard" style="display:none;">
+            <h3>Zona de Administración</h3><div class="lock-overlay">🔒 Zona protegida</div>
             <button class="editable-element danger" onclick="confirmResetTournament()">Borrar Todo el Torneo</button>
         </div>
     </div>
-
     <div id="tab-rounds" class="tab-content">
         <div class="round-selector" id="roundSelector"></div>
         <div id="matchesContainer"></div>
-        <div class="card show-lock-msg" style="padding:0; background:transparent; box-shadow:none;">
-            <div class="lock-overlay">🔒 Desbloquea para guardar</div>
-            <button id="saveBtn" class="editable-element" onclick="syncToGoogle()">Guardar Resultados</button>
+        <div class="card show-lock-msg" style="padding: 0; background: transparent; box-shadow: none;">
+             <div class="lock-overlay">🔒 Desbloquea para guardar cambios</div>
+             <button id="saveBtn" class="editable-element" onclick="syncToGoogle()">Guardar resultados de la ronda</button>
         </div>
     </div>
-
     <div id="tab-ranking" class="tab-content">
         <div class="card">
             <h3>Clasificación General</h3>
@@ -111,103 +110,149 @@
             </table>
         </div>
     </div>
-
     <div id="tab-export" class="tab-content">
         <div class="card">
-            <h3>Documentos del Torneo</h3>
+            <h3>Panel de Exportación</h3>
+            <p>Descarga los documentos oficiales del torneo.</p>
             <button class="export" onclick="downloadPDF()">⬇️ Descargar Clasificación</button>
             <button class="export" style="background-color: var(--primary); margin-top: 15px;" onclick="downloadMatchesPDF()">📅 Descargar Emparejamientos</button>
         </div>
     </div>
 </div>
-
 <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('tab-setup', this)"><span class="nav-icon">⚙️</span>Config</div>
     <div class="nav-item" onclick="switchTab('tab-rounds', this)"><span class="nav-icon">📅</span>Rondas</div>
     <div class="nav-item" onclick="switchTab('tab-ranking', this)"><span class="nav-icon">🏆</span>Ranking</div>
     <div class="nav-item" onclick="switchTab('tab-export', this)"><span class="nav-icon">📄</span>PDF</div>
 </div>
-
+<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle"></h3><p id="confirmMessage"></p><div class="modal-buttons"><button onclick="closeConfirmModal(false)">Cancelar</button><button id="confirmActionBtn" onclick="closeConfirmModal(true)">Confirmar</button></div></div></div>
 <div id="pwdModal" class="modal">
     <div class="modal-content">
-        <h3>Acceso Admin</h3>
-        <input type="password" id="pwdInput" style="width:100%; padding:10px; margin:10px 0;">
+        <h3>Acceso Administrador</h3>
+        <input type="password" id="pwdInput" placeholder="Contraseña">
         <button onclick="checkPassword()">Entrar</button>
         <button onclick="closePasswordModal()">Cancelar</button>
     </div>
 </div>
-<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle"></h3><p id="confirmMessage"></p><button onclick="closeConfirmModal(false)">Cancelar</button><button onclick="closeConfirmModal(true)">Confirmar</button></div></div>
 <div id="toast"></div>
 
 <script>
-    // --- LÓGICA DE CONTROL DE VERSIÓN (ANTI-BUCLE) ---
-    const APP_VERSION = "1.0.9"; 
-    (function() {
-        const savedV = localStorage.getItem('siurot_v');
-        if (savedV !== APP_VERSION) {
-            localStorage.setItem('siurot_v', APP_VERSION); // GUARDAMOS PRIMERO
-            if (savedV) { // Solo recargamos si no es la primera vez que entra en la vida
-                window.location.replace(window.location.pathname + "?u=" + Date.now());
-            }
-        }
-    })();
-
+    // VERSIÓN DEL CÓDIGO
+    const APP_VERSION = "1.0.6"; 
     const ADMIN_PASS = "bejherro";
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeRMzVOAm3h6qE7bqoVy2P7_g1NmkGxhImqqW0Z3mAIkgF5Fr0V_AODKf2o4ciPOZO/exec";
     
     let isAdmin = false, appData = { players: [], matches: [], started: false }, currentRound = 1, pendingAction = null;
 
-    document.addEventListener('DOMContentLoaded', () => { fetchFromGoogle(); });
+    // --- LÓGICA DE VERSIÓN CORREGIDA (SIN BUCLE INFINITO) ---
+    (function() {
+        const savedVersion = localStorage.getItem('siurot_v');
+        if (savedVersion !== APP_VERSION) {
+            console.log("Nueva versión detectada. Actualizando...");
+            // 1. Limpiamos caché
+            localStorage.clear();
+            // 2. Guardamos la nueva versión ANTES de recargar
+            localStorage.setItem('siurot_v', APP_VERSION);
+            
+            // 3. Solo recargamos si ya había una versión guardada antes (para evitar recarga al primer acceso)
+            if (savedVersion) {
+                window.location.reload(true);
+            }
+        }
+    })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchFromGoogle();
+        document.getElementById('pwdInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+    });
 
     async function fetchFromGoogle() {
-        showLoading("Sincronizando...");
+        showLoading("Sincronizando con la nube...");
         try {
+            // Añadimos timestamp para evitar caché de red
             const res = await fetch(`${SCRIPT_URL}?action=read&t=${Date.now()}`);
             const data = await res.json();
             if (data.db) appData = data.db;
             renderUI();
-        } catch (e) { showToast("Error de conexión"); }
+        } catch (e) { showToast("Error al conectar con la base de datos"); }
         finally { hideLoading(); }
     }
 
     async function syncToGoogle() {
         if (!isAdmin) return;
-        showLoading("Guardando...");
+        showLoading("Guardando resultados...");
         try {
-            await fetch(SCRIPT_URL, {
+            const res = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({ action: 'sync', matches: appData.matches, players: appData.players })
+                body: JSON.stringify({
+                    action: 'sync',
+                    matches: appData.matches,
+                    players: appData.players
+                })
             });
-            setTimeout(fetchFromGoogle, 1000);
-            showToast("✅ Resultados guardados");
-        } catch (e) { showToast("Error al guardar"); }
+            const data = await res.json();
+            if (data.status === 'success') { 
+                appData = data.db; 
+                showToast("✅ Resultados guardados con éxito"); 
+                renderUI(); 
+            }
+        } catch (e) { showToast("❌ Error al guardar. Inténtalo de nuevo."); }
+        finally { hideLoading(); }
     }
 
-    // --- LÓGICA DE RANKING Y UI ---
+    async function sendGoogleAction(action, params = {}) {
+        showLoading("Procesando solicitud...");
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: action,
+                    ...params
+                })
+            });
+            const data = await res.json();
+            if (data.status === 'reset') {
+                appData = { players: [], matches: [], started: false };
+                showToast("🧹 Torneo borrado completamente");
+                renderUI();
+                location.reload(); 
+            } else if (data.db) { 
+                appData = data.db; 
+                showToast("🚀 Torneo listo para empezar");
+                renderUI(); 
+            }
+        } catch (e) { showToast("Error en la operación"); }
+        finally { hideLoading(); }
+    }
+
     function calculateRanking() {
         let standings = appData.players.map(p => ({ ...p, points: 0, buchholz: 0 }));
         appData.matches.forEach(m => {
-            if (m.result === '1-0') standings.find(s => s.id === m.player1Id).points += 1;
-            else if (m.result === '0-1') standings.find(s => s.id === m.player2Id).points += 1;
+            if (m.result === '1-0') { (standings.find(s => s.id === m.player1Id) || {}).points += 1; }
+            else if (m.result === '0-1') { (standings.find(s => s.id === m.player2Id) || {}).points += 1; }
             else if (m.result === '1/2-1/2') {
-                standings.find(s => s.id === m.player1Id).points += 0.5;
-                standings.find(s => s.id === m.player2Id).points += 0.5;
+                (standings.find(s => s.id === m.player1Id) || {}).points += 0.5;
+                (standings.find(s => s.id === m.player2Id) || {}).points += 0.5;
             }
         });
         standings.forEach(p => {
             let bh = 0;
             appData.matches.forEach(m => {
                 let oppId = m.player1Id === p.id ? m.player2Id : (m.player2Id === p.id ? m.player1Id : -1);
-                if (oppId !== -1) bh += (standings.find(s => s.id === oppId) || {points:0}).points;
+                if (oppId !== -1) {
+                    const opp = standings.find(s => s.id === oppId);
+                    if (opp) bh += opp.points;
+                }
             });
             p.buchholz = bh;
         });
-        return standings.sort((a,b) => b.points - a.points || b.buchholz - a.buchholz);
+        return standings.sort((a,b) => (b.points - a.points) || (b.buchholz - a.buchholz) || a.name.localeCompare(b.name));
     }
 
     function renderUI() {
-        document.getElementById('playersInput').value = appData.players.map(p=>p.name).join('\n');
+        document.getElementById('playersInput').value = appData.players.length ? appData.players.map(p=>p.name).join('\n') : "";
         document.getElementById('resetCard').style.display = appData.started ? "block" : "none";
         if (appData.started) { renderRoundSelector(); renderMatches(currentRound); renderRanking(); }
     }
@@ -218,7 +263,7 @@
         const rounds = [...new Set(appData.matches.map(m=>m.round))];
         rounds.forEach(r => {
             const chip = document.createElement('div');
-            chip.className = `round-chip ${r===currentRound ? 'active' : ''}`;
+            chip.className = `round-chip ${appData.matches.some(m=>m.round===r && m.result) ? 'has-results' : ''} ${r===currentRound ? 'active' : ''}`;
             chip.innerText = `Ronda ${r}`;
             chip.onclick = () => { currentRound = r; renderRoundSelector(); renderMatches(r); };
             container.appendChild(chip);
@@ -228,20 +273,24 @@
     function renderMatches(r) {
         const container = document.getElementById('matchesContainer');
         container.innerHTML = "";
-        appData.matches.filter(m=>m.round===r).forEach((m, idx) => {
+        let mesaCount = 1;
+        appData.matches.filter(m=>m.round===r).forEach(m => {
             const p1 = appData.players.find(p=>p.id===m.player1Id), p2 = appData.players.find(p=>p.id===m.player2Id);
-            container.innerHTML += `<div class="match-card">
-                <div class="match-header">Mesa ${idx+1}</div>
+            const div = document.createElement('div');
+            div.className = 'match-card';
+            div.innerHTML = `<div class="match-header">Mesa ${mesaCount++}</div>
                 <div class="players">
-                    <div class="player-name">♔ ${p1.name}</div><div class="vs">vs</div><div class="player-name">${p2.name} ♚</div>
+                    <div class="player-name ${m.result==='1-0'?'winner':m.result==='0-1'?'loser':m.result?'draw':''}">♔ ${p1.name}</div>
+                    <div class="vs">vs</div>
+                    <div class="player-name ${m.result==='0-1'?'winner':m.result==='1-0'?'loser':m.result?'draw':''}" style="text-align:right">${p2.name} ♚</div>
                 </div>
-                <select class="result-select editable-element" onchange="updateMatch('${m.id}', this.value)">
+                <select class="result-select editable-element" onchange="updateMatchLocal('${m.id}', this.value)">
                     <option value="" ${!m.result?'selected':''}>Pendiente...</option>
-                    <option value="1-0" ${m.result==='1-0'?'selected':''}>Victoria Blancas</option>
-                    <option value="0-1" ${m.result==='0-1'?'selected':''}>Victoria Negras</option>
-                    <option value="1/2-1/2" ${m.result==='1/2-1/2'?'selected':''}>Tablas</option>
-                </select>
-            </div>`;
+                    <option value="1-0" ${m.result==='1-0'?'selected':''}>Victoria Blancas (1-0)</option>
+                    <option value="0-1" ${m.result==='0-1'?'selected':''}>Victoria Negras (0-1)</option>
+                    <option value="1/2-1/2" ${m.result==='1/2-1/2'?'selected':''}>Tablas (½-½)</option>
+                </select>`;
+            container.appendChild(div);
         });
     }
 
@@ -249,66 +298,173 @@
         const tbody = document.querySelector('#rankingTable tbody');
         tbody.innerHTML = "";
         calculateRanking().forEach((p, i) => {
-            tbody.innerHTML += `<tr><td>${i+1}</td><td>${p.name}</td><td class="points-col">${p.points}</td><td style="text-align:right">${p.buchholz.toFixed(1)}</td></tr>`;
+            tbody.innerHTML += `<tr><td class="rank-col">${i+1}</td><td>${p.name}</td><td class="points-col">${p.points}</td><td style="text-align:right">${p.buchholz.toFixed(1)}</td></tr>`;
         });
     }
 
-    function updateMatch(id, res) { 
+    function updateMatchLocal(id, res) { 
         const m = appData.matches.find(x=>x.id===id); 
         if (m) m.result = res; 
-        renderMatches(currentRound);
+        renderMatches(currentRound); 
+        renderRoundSelector(); 
     }
 
-    // --- FUNCIONES PDF ---
-    function downloadPDF() {
-        const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        doc.text("Clasificación - Ajedrez Siurot", 15, 20);
-        let y = 30;
-        calculateRanking().forEach((p, i) => {
-            doc.text(`${i+1}. ${p.name.padEnd(20)} Pts: ${p.points} BH: ${p.buchholz}`, 15, y);
-            y += 10;
-        });
-        doc.save("Clasificacion.pdf");
-    }
-
-    function downloadMatchesPDF() {
-        const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        doc.setFontSize(16); doc.text("Emparejamientos - Ajedrez Siurot", 15, 20);
-        let y = 30;
-        const rounds = [...new Set(appData.matches.map(m=>m.round))];
-        rounds.forEach(r => {
-            doc.setFont(undefined, 'bold'); doc.text(`RONDA ${r}`, 15, y); y += 10;
-            doc.setFont(undefined, 'normal');
-            appData.matches.filter(m=>m.round===r).forEach((m, i) => {
-                const p1 = appData.players.find(p=>p.id===m.player1Id).name;
-                const p2 = appData.players.find(p=>p.id===m.player2Id).name;
-                doc.text(`Mesa ${i+1}: ${p1} vs ${p2}`, 20, y); y += 8;
-                if(y > 270) { doc.addPage(); y = 20; }
-            });
-            y += 5;
-        });
-        doc.save("Emparejamientos.pdf");
-    }
-
-    // --- UTILIDADES ---
     function showLoading(t) { document.getElementById('loadingText').innerText = t; document.getElementById('loadingOverlay').style.display = "flex"; }
     function hideLoading() { document.getElementById('loadingOverlay').style.display = "none"; }
     function showToast(m) { const x = document.getElementById("toast"); x.innerText = m; x.className = "show"; setTimeout(()=>x.className="", 3000); }
-    function openPasswordModal() { document.getElementById('pwdModal').style.display="flex"; }
+    function openPasswordModal() { if(isAdmin){ isAdmin=false; updateAdminMode(); } else document.getElementById('pwdModal').style.display="flex"; }
     function closePasswordModal() { document.getElementById('pwdModal').style.display="none"; }
-    function checkPassword() {
-        if(document.getElementById('pwdInput').value===ADMIN_PASS) {
-            isAdmin = true; closePasswordModal(); 
-            document.body.classList.remove('is-locked');
-            document.getElementById('adminBtn').innerHTML = "🔓";
-            showToast("Acceso concedido");
-        } else showToast("Error");
+    function checkPassword() { if(document.getElementById('pwdInput').value===ADMIN_PASS){ isAdmin=true; closePasswordModal(); updateAdminMode(); showToast("🔓 Acceso concedido"); } else { showToast("❌ Contraseña incorrecta"); } document.getElementById('pwdInput').value=""; }
+    function updateAdminMode() { const b = document.getElementById('adminBtn'); b.innerHTML = isAdmin?"🔓":"🔒"; b.className = isAdmin?"unlocked":""; document.body.className = isAdmin?"":"is-locked"; }
+    function switchTab(id, el) { 
+        document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active')); document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); el.classList.add('active');
+        if(id==='tab-ranking') renderRanking();
     }
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-        el.classList.add('active');
+    function confirmStartTournament() { if(!isAdmin) return; openConfirmModal("Configurar Torneo", "¿Deseas generar el calendario con estos jugadores? Se perderán los datos actuales.", "start"); }
+    function confirmResetTournament() { if(!isAdmin) return; openConfirmModal("¡ATENCIÓN!", "¿Seguro que quieres borrar todo el torneo? Esta acción no se puede deshacer.", "reset"); }
+    function openConfirmModal(t, m, a) { document.getElementById('confirmTitle').innerText=t; document.getElementById('confirmMessage').innerText=m; pendingAction=a; document.getElementById('confirmModal').style.display="flex"; }
+    
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function generateRoundRobin(players) {
+        const n = players.length;
+        const isOdd = n % 2 !== 0;
+        const tempPlayers = isOdd ? [...players, { id: -1, name: "BYE" }] : [...players];
+        const numPlayers = tempPlayers.length;
+        const numRounds = numPlayers - 1;
+        const matchesPerRound = numPlayers / 2;
+        let matches = [];
+
+        for (let round = 1; round <= numRounds; round++) {
+            for (let i = 0; i < matchesPerRound; i++) {
+                const p1 = tempPlayers[i];
+                const p2 = tempPlayers[numPlayers - 1 - i];
+                if (p1.id !== -1 && p2.id !== -1) {
+                    matches.push({
+                        id: `m_${round}_${i}`,
+                        round: round,
+                        player1Id: round % 2 === 0 ? p2.id : p1.id,
+                        player2Id: round % 2 === 0 ? p1.id : p2.id,
+                        result: ""
+                    });
+                }
+            }
+            tempPlayers.splice(1, 0, tempPlayers.pop());
+        }
+        return matches;
+    }
+
+    function closeConfirmModal(c) { 
+        document.getElementById('confirmModal').style.display="none"; 
+        if(c && pendingAction === 'start') {
+            let names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
+            if(names.length < 2) { showToast("Mínimo 2 jugadores"); return; }
+            names = shuffleArray(names);
+            const players = names.map((name, index) => ({ id: index + 1, name: name }));
+            const matches = generateRoundRobin(players);
+            sendGoogleAction('create', { players: players, matches: matches });
+        }
+        if(c && pendingAction === 'reset') sendGoogleAction('reset');
+    }
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text("Clasificación Final - Ajedrez Siurot", 15, 20);
+        doc.setFontSize(10);
+        doc.text("Fecha: " + new Date().toLocaleDateString(), 15, 28);
+        let y = 45;
+        const colPos = 15, colName = 30, colPts = 120, colBH = 150;
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.text("Pos", colPos, y);
+        doc.text("Jugador", colName, y);
+        doc.text("Pts", colPts, y);
+        doc.text("BH", colBH, y);
+        doc.line(15, y + 2, 195, y + 2);
+        y += 10;
+        doc.setFont(undefined, 'normal');
+        calculateRanking().forEach((p, i) => { 
+            doc.text((i + 1).toString(), colPos, y);
+            doc.text(p.name, colName, y);
+            doc.text(p.points.toString(), colPts, y);
+            doc.text(p.buchholz.toFixed(1), colBH, y);
+            y += 8;
+            if(y > 275) { doc.addPage(); y = 20; }
+        });
+        y += 10;
+        if(y > 250) { doc.addPage(); y = 20; }
+        doc.setFont(undefined, 'bold');
+        doc.text("Resultados de las Rondas Jugadas", 15, y);
+        y += 10;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(10);
+        const rounds = [...new Set(appData.matches.map(m => m.round))].sort((a,b) => a-b);
+        rounds.forEach(r => {
+            const roundMatches = appData.matches.filter(m => m.round === r && m.result);
+            if(roundMatches.length > 0) {
+                doc.setFont(undefined, 'bold');
+                doc.text(`RONDA ${r}`, 15, y);
+                y += 6;
+                doc.setFont(undefined, 'normal');
+                roundMatches.forEach(m => {
+                    const p1 = appData.players.find(p => p.id === m.player1Id).name;
+                    const p2 = appData.players.find(p => p.id === m.player2Id).name;
+                    doc.text(`${p1}  [${m.result}]  ${p2}`, 20, y);
+                    y += 5;
+                    if(y > 280) { doc.addPage(); y = 20; }
+                });
+                y += 4;
+            }
+        });
+        doc.save("Clasificacion_Ajedrez_Siurot.pdf");
+    }
+
+    function downloadMatchesPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text("Emparejamientos - Ajedrez Siurot", 15, 20);
+        doc.setFontSize(10);
+        doc.text("Nota: El primer jugador de cada mesa lleva BLANCAS y es responsable del tablero.", 15, 28);
+        let y = 40;
+        const rounds = [...new Set(appData.matches.map(m => m.round))].sort((a,b) => a-b);
+        rounds.forEach(r => {
+            if(y > 240) { doc.addPage(); y = 20; }
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setFillColor(230, 230, 230);
+            doc.rect(15, y, 180, 8, 'F');
+            doc.text(`RONDA ${r}`, 20, y + 6);
+            y += 15;
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            let mesa = 1;
+            appData.matches.filter(m => m.round === r).forEach(m => {
+                const p1 = appData.players.find(p => p.id === m.player1Id).name;
+                const p2 = appData.players.find(p => p.id === m.player2Id).name;
+                doc.text(`Mesa ${mesa}:`, 15, y);
+                doc.setFont(undefined, 'bold');
+                doc.text(p1, 35, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(" (B)  vs  ", 85, y);
+                doc.text(p2, 110, y);
+                doc.text(" (N)", 175, y);
+                y += 8;
+                mesa++;
+                if(y > 280) { doc.addPage(); y = 20; }
+            });
+            y += 10;
+        });
+        doc.save("Emparejamientos_Torneo_Siurot.pdf");
     }
 </script>
 </body>
