@@ -4,895 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ajedrez Siurot</title>
-    <meta name="theme-color" content="#e67e22">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Ajedrez.ico" type="image/x-icon">
-    
-    <!-- MANIFESTO PARA PWA (IMPORTANTE) -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Librería jsPDF para generar PDFs -->
+    <link rel="icon" href="https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/icono.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <style>
         :root {
-            --primary: #2c3e50;
-            --secondary: #ecf0f1;
-            --accent: #e67e22;
-            --accent-light: #fcefe9;
-            --success: #27ae60;
-            --win-color: #27ae60;
-            --loss-color: #e74c3c;
-            --draw-color: #3498db;
-            --round-done: #d1ecf1;
-            --round-done-text: #0c5460;
-            --danger: #c0392b;
-            --text: #333;
-            --light-text: #7f8c8d;
-            --border: #bdc3c7;
-            --card-bg: #ffffff;
+            --primary: #2c3e50; --secondary: #ecf0f1; --accent: #e67e22; 
+            --accent-light: #fcefe9; --success: #27ae60; --win-color: #27ae60; 
+            --loss-color: #e74c3c; --draw-color: #3498db; --round-done: #d1ecf1; 
+            --round-done-text: #0c5460; --danger: #c0392b; --text: #333; 
+            --light-text: #7f8c8d; --border: #bdc3c7; --card-bg: #ffffff;
         }
-
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        
         body { margin: 0; padding: 0; background-color: var(--secondary); color: var(--text); padding-bottom: 80px; }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        header { background-color: var(--primary); color: white; padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; }
         .header-text { text-align: left; flex: 1; }
         h1 { margin: 0; font-size: 1.3rem; }
         .subtitle { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; font-weight: normal; }
-        
-        #adminBtn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; 
-            border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all 0.3s;
-            margin-left: 10px;
-            flex-shrink: 0;
-        }
-        #adminBtn:active { background-color: rgba(255,255,255,0.3); }
+        #adminBtn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 10px; flex-shrink: 0; }
         #adminBtn.unlocked { background-color: var(--success); border-color: var(--success); }
-
         .container { padding: 1rem; max-width: 600px; margin: 0 auto; }
-
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity:1; } }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            position: relative;
-        }
-
-        body.is-locked .editable-element {
-            opacity: 0.3;
-            pointer-events: none;
-            user-select: none;
-        }
-        
-        .lock-overlay {
-            display: none;
-            text-align: center;
-            color: var(--danger);
-            padding: 10px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            background: rgba(255,255,255,0.9);
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        body.is-locked .show-lock-msg .lock-overlay {
-            display: block;
-        }
-
-        textarea {
-            width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border);
-            border-radius: 5px; resize: vertical; font-size: 16px;
-        }
-
-        button {
-            background-color: var(--primary); color: white; border: none;
-            padding: 12px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer;
-            width: 100%; margin-top: 10px; font-weight: bold;
-            transition: background 0.2s;
-        }
+        .card { background: var(--card-bg); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+        body.is-locked .editable-element { opacity: 0.3; pointer-events: none; user-select: none; }
+        .lock-overlay { display: none; text-align: center; color: var(--danger); padding: 10px; font-weight: bold; font-size: 0.9rem; background: rgba(255,255,255,0.9); border-radius: 5px; margin-bottom: 10px; }
+        body.is-locked .show-lock-msg .lock-overlay { display: block; }
+        textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid var(--border); border-radius: 5px; resize: vertical; font-size: 16px; }
+        button { background-color: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; transition: background 0.2s; }
         button:active { transform: scale(0.98); }
-        button.secondary { background-color: var(--light-text); }
         button.export { background-color: var(--success); }
         button.danger { background-color: var(--danger); }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        .match-card {
-            display: flex; flex-direction: column; background: var(--card-bg);
-            border-radius: 8px; padding: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent);
-            position: relative;
-        }
-        
-        .match-header {
-            font-size: 0.8rem; color: var(--light-text); margin-bottom: 5px; text-transform: uppercase; font-weight: bold;
-        }
-
+        .match-card { display: flex; flex-direction: column; background: var(--card-bg); border-radius: 8px; padding: 10px; margin-bottom: 12px; border-left: 4px solid var(--accent); position: relative; }
+        .match-header { font-size: 0.8rem; color: var(--light-text); margin-bottom: 5px; text-transform: uppercase; font-weight: bold; }
         .players { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-
-        .player-name { 
-            font-weight: 600; 
-            flex:1; 
-            transition: color 0.3s ease;
-        }
-        .player-name.white { color: var(--primary); }
-        .player-name.black { color: var(--text); text-align: right; }
+        .player-name { font-weight: 600; flex:1; transition: color 0.3s ease; }
+        .player-name.winner { color: var(--win-color); }
+        .player-name.loser { color: var(--loss-color); }
+        .player-name.draw { color: var(--draw-color); }
         .vs { font-size: 0.8rem; color: var(--light-text); padding: 0 5px; }
-
-        .player-name.winner { color: var(--win-color); font-weight: 600; }
-        .player-name.loser { color: var(--loss-color); font-weight: 600; }
-        .player-name.draw { color: var(--draw-color); font-weight: 600; }
-
-        .result-select {
-            width: 100%; padding: 8px; border-radius: 5px; border: 1px solid var(--border);
-            background: #fafafa; font-size: 1rem;
-        }
-
+        .result-select { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid var(--border); background: #fafafa; font-size: 1rem; }
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 8px 5px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        th { background-color: var(--primary); color: white; font-size: 0.8rem; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .sb-col { text-align: right; font-size: 0.8rem; color: var(--light-text); }
-        .points-col { text-align: right; font-weight: bold; color: var(--accent); font-size: 1.1rem; }
-        .rank-col { width: 30px; text-align: center; color: var(--light-text); font-weight: bold; }
-
-        .tiebreak-info {
-            background-color: var(--accent-light);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            color: var(--text);
-            border-left: 3px solid var(--accent);
-        }
-        .tiebreak-info strong { display: block; margin-bottom: 4px; color: var(--primary); }
-        .tiebreak-info ul { margin: 0; padding-left: 20px; }
-
-        .modal {
-            display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background-color: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .modal-content h3 { margin-top: 0; color: var(--primary); }
-        .modal-content p { color: #555; line-height: 1.5; margin-bottom: 20px; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: var(--primary); color: white; font-size: 0.9rem; }
+        .points-col { text-align: right; font-weight: bold; color: var(--accent); }
+        .rank-col { width: 40px; text-align: center; color: var(--light-text); font-weight: bold; }
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .modal-buttons { display: flex; gap: 10px; }
-        .modal-buttons button { width: 50%; margin-top: 0; }
-
-        #pwdModal .modal-content { max-width: 300px; }
-        #pwdModal input {
-            width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border); border-radius: 5px; font-size: 1rem;
-        }
-
-        #loadingOverlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8);
-            z-index: 300;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--accent);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 10px;
-        }
+        #pwdModal input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--border); border-radius: 5px; }
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 300; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; background: white; display: flex;
-            justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); z-index: 99;
-        }
-        .nav-item { text-align: center; color: var(--light-text); font-size: 0.75rem; cursor: pointer; flex: 1; user-select: none; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); z-index: 99; }
+        .nav-item { text-align: center; color: var(--light-text); font-size: 0.75rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--accent); font-weight: bold; }
         .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
-        
         .round-selector { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; margin-bottom: 15px; }
-        
-        .round-chip { 
-            background: #eee; color: #555; 
-            padding: 5px 15px; border-radius: 20px; white-space: nowrap; font-size: 0.9rem; cursor: pointer; 
-            transition: all 0.2s; border: 1px solid transparent;
-        }
-        
-        .round-chip.has-results { 
-            background-color: var(--round-done); 
-            color: var(--round-done-text); 
-            border: 1px solid var(--round-done-text);
-        }
-        
-        .round-chip.active { 
-            background: var(--accent) !important; 
-            color: white !important; 
-            border-color: var(--accent) !important;
-        }
-
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
-            text-align: center; border-radius: 4px; padding: 16px; position: fixed;
-            z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 1rem;
-        }
+        .round-chip { background: #eee; color: #555; padding: 5px 15px; border-radius: 20px; white-space: nowrap; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .round-chip.has-results { background-color: var(--round-done); color: var(--round-done-text); border: 1px solid var(--round-done-text); }
+        .round-chip.active { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; }
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 90px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 60px; opacity: 0;} to {bottom: 90px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 90px; opacity: 1;} to {bottom: 60px; opacity: 0;} }
-
     </style>
 </head>
 <body class="is-locked">
-
-<div id="loadingOverlay">
-    <div class="spinner"></div>
-    <div id="loadingText">Conectando...</div>
-</div>
-
+<div id="loadingOverlay"><div class="spinner"></div><div id="loadingText">Conectando...</div></div>
 <header>
-    <div class="header-text">
-        <h1>Ajedrez Siurot</h1>
-        <div class="subtitle">Torneo CEIP Manuel Siurot 2026</div>
-    </div>
-    <button id="adminBtn" onclick="openPasswordModal()" title="Admin">🔒</button>
+    <div class="header-text"><h1>Ajedrez Siurot</h1><div class="subtitle">Torneo CEIP Manuel Siurot 2026</div></div>
+    <button id="adminBtn" onclick="openPasswordModal()">🔒</button>
 </header>
-
 <div class="container">
-    
-    <!-- TAB 1: CONFIGURACIÓN -->
     <div id="tab-setup" class="tab-content active">
         <div class="card show-lock-msg">
-            <h3>1. Jugadores</h3>
-            <p>Escribe un nombre por línea. Mínimo 2 jugadores.</p>
-            
+            <h3>1. Registro de Jugadores</h3><p>Introduce un nombre por línea. El sistema generará el calendario automáticamente.</p>
             <div class="lock-overlay">🔒 Modo lectura: Pulsa el candado para editar</div>
-            <textarea id="playersInput" class="editable-element" placeholder="Nombre 1&#10;Nombre 2&#10;Nombre 3..."></textarea>
-            
+            <textarea id="playersInput" class="editable-element" placeholder="Ejemplo:&#10;Juan Pérez&#10;María García..."></textarea>
             <button class="editable-element" onclick="confirmStartTournament()">Crear / Actualizar Torneo</button>
         </div>
-        
         <div class="card show-lock-msg" id="resetCard" style="display:none;">
-            <h3>Zona de Peligro</h3>
-            <p style="color:var(--danger); font-size:0.9rem;">Esto borrará todos los resultados y jugadores.</p>
-            <div class="lock-overlay">🔒 Zona protegida</div>
-            <button class="editable-element danger" onclick="confirmResetTournament()">Borrar Todo</button>
+            <h3>Zona de Administración</h3><div class="lock-overlay">🔒 Zona protegida</div>
+            <button class="editable-element danger" onclick="confirmResetTournament()">Borrar Todo el Torneo</button>
         </div>
     </div>
-
-    <!-- TAB 2: RONDAS -->
     <div id="tab-rounds" class="tab-content">
         <div class="round-selector" id="roundSelector"></div>
         <div id="matchesContainer"></div>
-        <div style="height: 20px;"></div> 
         <div class="card show-lock-msg" style="padding: 0; background: transparent; box-shadow: none;">
-             <div class="lock-overlay">🔒 Necesitas desbloquear para guardar</div>
-             <button id="saveBtn" class="editable-element" onclick="syncToGoogle()">Guardar resultados</button>
+             <div class="lock-overlay">🔒 Desbloquea para guardar cambios</div>
+             <button id="saveBtn" class="editable-element" onclick="syncToGoogle()">Guardar resultados de la ronda</button>
         </div>
     </div>
-
-    <!-- TAB 3: CLASIFICACIÓN -->
     <div id="tab-ranking" class="tab-content">
         <div class="card">
-            <h3>Clasificación</h3>
-            
-            <div class="tiebreak-info">
-                <strong>Criterios de desempate (por orden):</strong>
-                <ul>
-                    <li>1. Enfrentamiento Directo</li>
-                    <li>2. Mayor número de victorias</li>
-                    <li>3. Sistema Sonneborn-Berger</li>
-                </ul>
-            </div>
-
+            <h3>Clasificación General</h3>
             <table id="rankingTable">
-                <thead>
-                    <tr>
-                        <th class="rank-col">#</th>
-                        <th>Jugador</th>
-                        <th class="points-col">Pts</th>
-                        <th class="sb-col">S-B</th>
-                    </tr>
-                </thead>
+                <thead><tr><th class="rank-col">Pos</th><th>Jugador</th><th class="points-col">Pts</th><th style="text-align:right">BH</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
     </div>
-
-    <!-- TAB 4: EXPORTAR -->
     <div id="tab-export" class="tab-content">
-        <div class="card">
-            <h3>Exportar a PDF</h3>
-            <p>Descarga el informe completo con los resultados y la clasificación actual.</p>
-            <button class="export" onclick="downloadPDF()">⬇️ Descargar PDF</button>
-        </div>
+        <div class="card"><h3>Panel de Exportación</h3><p>Descarga la clasificación actual en formato PDF.</p><button class="export" onclick="downloadPDF()">⬇️ Descargar Clasificación</button></div>
     </div>
-
 </div>
-
-<!-- BOTTOM NAVIGATION -->
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('tab-setup', this)">
-        <span class="nav-icon">⚙️</span>Inicio
-    </div>
-    <div class="nav-item" onclick="switchTab('tab-rounds', this)">
-        <span class="nav-icon">📅</span>Rondas
-    </div>
-    <div class="nav-item" onclick="switchTab('tab-ranking', this)">
-        <span class="nav-icon">🏆</span>Ranking
-    </div>
-    <div class="nav-item" onclick="switchTab('tab-export', this)">
-        <span class="nav-icon">📄</span>Exportar
-    </div>
+    <div class="nav-item active" onclick="switchTab('tab-setup', this)"><span class="nav-icon">⚙️</span>Config</div>
+    <div class="nav-item" onclick="switchTab('tab-rounds', this)"><span class="nav-icon">📅</span>Rondas</div>
+    <div class="nav-item" onclick="switchTab('tab-ranking', this)"><span class="nav-icon">🏆</span>Ranking</div>
+    <div class="nav-item" onclick="switchTab('tab-export', this)"><span class="nav-icon">📄</span>PDF</div>
 </div>
-
-<!-- MODAL CONFIRMACIÓN -->
-<div id="confirmModal" class="modal">
-    <div class="modal-content">
-        <h3 id="confirmTitle">¿Estás seguro?</h3>
-        <p id="confirmMessage">Mensaje de confirmación.</p>
-        <div class="modal-buttons">
-            <button class="secondary" onclick="closeConfirmModal(false)">Cancelar</button>
-            <button id="confirmActionBtn" onclick="closeConfirmModal(true)">Confirmar</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL CONTRASEÑA -->
-<div id="pwdModal" class="modal">
-    <div class="modal-content">
-        <h3>Acceso Admin</h3>
-        <p>Introduce la contraseña:</p>
-        <input type="password" id="pwdInput" placeholder="Contraseña" onkeydown="if(event.key === 'Enter') checkPassword()">
-        <button onclick="checkPassword()">Entrar</button>
-        <button class="secondary" onclick="closePasswordModal()" style="margin-top:5px;">Cancelar</button>
-    </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast">Notificación</div>
-
-<!-- AUDIO -->
-<audio id="tapSound" src="https://github.com/ManuelVS8/Efectos_audio/raw/37b3eb2da9c15c04dfb71dfe1be60f088ea3cdfc/Tap.mp3" preload="auto"></audio>
+<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle"></h3><p id="confirmMessage"></p><div class="modal-buttons"><button onclick="closeConfirmModal(false)">Cancelar</button><button id="confirmActionBtn" onclick="closeConfirmModal(true)">Confirmar</button></div></div></div>
+<div id="pwdModal" class="modal"><div class="modal-content"><h3>Acceso Administrador</h3><input type="password" id="pwdInput" placeholder="Contraseña"><button onclick="checkPassword()">Entrar</button><button onclick="closePasswordModal()">Cancelar</button></div></div>
+<div id="toast"></div>
 
 <script>
-    // --- CONFIG & STATE ---
     const ADMIN_PASS = "bejherro";
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuFOrkI_zXag_SYKlWsCmh0tmgg-KtuUvCvanbAfWJD-_yDgI2hBbtovHyBl0pxbQ4/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeRMzVOAm3h6qE7bqoVy2P7_g1NmkGxhImqqW0Z3mAIkgF5Fr0V_AODKf2o4ciPOZO/exec";
+    let isAdmin = false, appData = { players: [], matches: [], started: false }, currentRound = 1, pendingAction = null;
 
-    let isAdmin = false;
-    let appData = {
-        players: [], 
-        matches: [],
-        started: false
-    };
-    let rawNamesString = ""; 
-    let currentRound = 1;
-    let pendingAction = null;
-
-    // --- PWA SERVICE WORKER REGISTRATION ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => {
-                    console.log('Service Worker registrado: ', reg);
-                })
-                .catch(err => {
-                    console.log('Service Worker registro falló: ', err);
-                });
-        });
-    }
-
-    // --- INIT ---
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchFromGoogle();
-    });
-
-    // --- GOOGLE SHEETS INTEGRATION ---
+    document.addEventListener('DOMContentLoaded', fetchFromGoogle);
 
     async function fetchFromGoogle() {
-        showLoading("Cargando datos del torneo...");
+        showLoading("Sincronizando con la nube...");
         try {
-            const response = await fetch(`${SCRIPT_URL}?action=read&t=${new Date().getTime()}`);
-            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-
-            const text = await response.text();
-            const data = JSON.parse(text);
-            
-            if (data && data.db) {
-                appData = data.db;
-                rawNamesString = appData.players.map(p => p.name).join('\n');
-                document.getElementById('playersInput').value = rawNamesString;
-            } else {
-                appData = { players: [], matches: [], started: false };
-            }
+            const res = await fetch(`${SCRIPT_URL}?action=read&t=${Date.now()}`);
+            const data = await res.json();
+            if (data.db) appData = data.db;
             renderUI();
-            updateAdminMode();
-        } catch (error) {
-            console.error("Error cargando datos:", error);
-            showToast("Error de conexión");
-        } finally {
-            hideLoading();
-        }
+        } catch (e) { showToast("Error al conectar con la base de datos"); }
+        finally { hideLoading(); }
     }
 
-       async function syncToGoogle() {
-        if (!isAdmin) {
-            showToast("Modo Solo Lectura");
-            return;
-        }
-        
-        showLoading("Guardando resultados en la nube...");
-        playTap();
-
-        // Convertimos los datos a un formato que Google Apps Script entienda por POST
-        const payload = {
-            action: 'sync',
-            matches: JSON.stringify(appData.matches)
-        };
-
-        // Intento de envío con reintento automático (Método POST)
-        for (let i = 0; i < 2; i++) {
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Importante para evitar bloqueos de seguridad de Google
-                    body: JSON.stringify(payload),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                // Nota: Con 'no-cors', Google no permite leer la respuesta JSON, 
-                // pero la ejecución en la hoja se realiza correctamente.
-                console.log(`Intento ${i+1}: Petición enviada.`);
-                
-                showToast(`✅ Resultados guardados`);
-                
-                // Esperamos 2 segundos y refrescamos los datos para confirmar
-                setTimeout(fetchFromGoogle, 2000);
-                return; 
-
-            } catch (e) {
-                console.warn(`Reintento de guardado (${i+1})...`, e);
-                if (i === 1) showToast("❌ Error de red. Comprueba tu conexión.");
+    async function syncToGoogle() {
+        if (!isAdmin) return;
+        showLoading("Guardando resultados...");
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'sync',
+                    matches: appData.matches,
+                    players: appData.players
+                })
+            });
+            const data = await res.json();
+            if (data.status === 'success') { 
+                appData = data.db; 
+                showToast("✅ Resultados guardados con éxito"); 
+                renderUI(); 
             }
-        }
+        } catch (e) { showToast("❌ Error al guardar. Inténtalo de nuevo."); }
+        finally { hideLoading(); }
     }
 
-    function sendGoogleAction(action, params = {}) {
-        return new Promise(async (resolve, reject) => {
-            showLoading("Procesando...");
-            try {
-                let url = `${SCRIPT_URL}?action=${action}&t=${new Date().getTime()}`;
-                if (params.players) url += `&players=${encodeURIComponent(JSON.stringify(params.players))}`;
-
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const text = await response.text();
-                const data = JSON.parse(text);
-                
-                if (data.status === 'success' || data.status === 'created' || data.status === 'reset') {
-                    appData = data.db;
-                    rawNamesString = appData.players.map(p => p.name).join('\n');
-                    document.getElementById('playersInput').value = rawNamesString;
-                    resolve(true);
-                } else {
-                    reject(new Error(data.message || "Error desconocido"));
-                }
-            } catch (error) {
-                console.error("Error en acción Google:", error);
-                showToast("Error: " + error.message);
-                reject(error);
-            } finally {
-                hideLoading();
-            }
-        });
-    }
-
-    function showLoading(text) {
-        document.getElementById('loadingText').innerText = text;
-        document.getElementById('loadingOverlay').style.display = "flex";
-    }
-
-    function hideLoading() {
-        document.getElementById('loadingOverlay').style.display = "none";
-    }
-
-    // --- AUDIO FUNCTION ---
-    function playTap() {
-        const audio = document.getElementById("tapSound");
-        if(audio) {
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio play blocked"));
-        }
-    }
-
-    // --- SECURITY / ADMIN ---
-    function openPasswordModal() {
-        playTap();
-        if (isAdmin) {
-            isAdmin = false;
-            updateAdminMode();
-            showToast("Modo Admin desactivado");
-        } else {
-            const modal = document.getElementById('pwdModal');
-            modal.style.display = "flex";
-            setTimeout(() => document.getElementById('pwdInput').focus(), 100);
-        }
-    }
-
-    function closePasswordModal() {
-        playTap();
-        document.getElementById('pwdModal').style.display = "none";
-    }
-
-    function checkPassword() {
-        const input = document.getElementById('pwdInput').value;
-        if (input === ADMIN_PASS) {
-            playTap();
-            isAdmin = true;
-            closePasswordModal();
-            updateAdminMode();
-            showToast("Modo Editor activado");
-        } else {
-            showToast("Contraseña incorrecta");
-            document.getElementById('pwdInput').value = "";
-        }
-    }
-
-    function updateAdminMode() {
-        const btn = document.getElementById('adminBtn');
-        if (isAdmin) {
-            btn.innerHTML = "🔓";
-            btn.classList.add('unlocked');
-            document.body.classList.remove('is-locked');
-        } else {
-            btn.innerHTML = "🔒";
-            btn.classList.remove('unlocked');
-            document.body.classList.add('is-locked');
-        }
-    }
-
-    // --- SISTEMA DE MODALES ---
-    
-    function openConfirmModal(title, message, actionType) {
-        playTap();
-        document.getElementById('confirmTitle').innerText = title;
-        document.getElementById('confirmMessage').innerText = message;
-        
-        const btn = document.getElementById('confirmActionBtn');
-        btn.className = ""; 
-        if (actionType === 'danger') {
-            btn.classList.add('danger');
-        } else {
-            btn.style.backgroundColor = "var(--primary)";
-        }
-
-        document.getElementById('confirmModal').style.display = "flex";
-        pendingAction = actionType;
-    }
-
-    function closeConfirmModal(confirmed) {
-        playTap();
-        document.getElementById('confirmModal').style.display = "none";
-        
-        if (confirmed && pendingAction) {
-            if (pendingAction === 'start') {
-                startTournamentLogic();
-            } else if (pendingAction === 'reset') {
-                resetTournamentLogic();
-            }
-        }
-        pendingAction = null;
-    }
-
-    // --- CONFIRMATIONS & CORE LOGIC ---
-
-    function confirmStartTournament() {
-        if (!isAdmin) {
-            showToast("Necesitas ser Admin para editar");
-            return;
-        }
-        
-        const input = document.getElementById('playersInput').value.trim();
-        if (!input) {
-            showToast("Escribe al menos un nombre");
-            return;
-        }
-
-        let title = "Crear Torneo";
-        let msg = "¿Seguro que quieres crear el torneo con estos jugadores?";
-        
-        if (appData.started) {
-            title = "Actualizar Torneo";
-            msg = "ATENCIÓN: Ya existe un torneo activo. Al actualizar se reiniciarán todos los resultados. ¿Estás seguro?";
-        }
-
-        openConfirmModal(title, msg, 'start');
-    }
-
-    function startTournamentLogic() {
-        playTap();
-        const input = document.getElementById('playersInput').value.trim();
-        rawNamesString = input;
-        const names = input.split('\n').map(n => n.trim()).filter(n => n !== "");
-        
-        if (names.length < 2) {
-            showToast("Se necesitan al menos 2 jugadores");
-            return;
-        }
-
-        sendGoogleAction('create', { players: names }).then(success => {
-            if (success) {
+    async function sendGoogleAction(action, params = {}) {
+        showLoading("Procesando solicitud...");
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: action,
+                    ...params
+                })
+            });
+            const data = await res.json();
+            if (data.status === 'reset') {
+                appData = { players: [], matches: [], started: false };
+                showToast("🧹 Torneo borrado completamente");
                 renderUI();
-                switchTab('tab-rounds', document.querySelectorAll('.nav-item')[1]);
-                showToast("Torneo creado");
+                location.reload(); // Recarga para limpiar estado visual
+            } else if (data.db) { 
+                appData = data.db; 
+                showToast("🚀 Torneo listo para empezar");
+                renderUI(); 
             }
-        }).catch(err => {
-            console.error(err);
-            showToast("Error al crear");
-        });
+        } catch (e) { showToast("Error en la operación"); }
+        finally { hideLoading(); }
     }
 
-    function confirmResetTournament() {
-        if (!isAdmin) {
-            showToast("Necesitas ser Admin para editar");
-            return;
-        }
-        openConfirmModal("Borrar Todo", "ATENCIÓN: Se eliminará toda la información. ¿Estás seguro?", 'reset');
-    }
-
-    function resetTournamentLogic() {
-        playTap();
-        sendGoogleAction('reset').then(success => {
-            if (success) {
-                document.getElementById('playersInput').value = ""; 
-                rawNamesString = "";
-                renderUI();
-                showToast("Torneo borrado");
-            }
-        }).catch(err => {
-            console.error(err);
-            showToast("Error al borrar");
-        });
-    }
-
-    function updateMatch(matchId, result) {
-        if (!isAdmin) return; 
-        playTap();
-        
-        const match = appData.matches.find(m => m.id === matchId);
-        if (match) {
-            match.result = result;
-        }
-        
-        renderMatches(currentRound);
-        renderRoundSelector();
-        // No llamar a syncToGoogle aquí.
-    }
-
-    // --- NUEVA LÓGICA DE RANKING (DESEMPATES) ---
     function calculateRanking() {
-        // 1. Inicializar estructura
-        let standings = appData.players.map(p => ({ 
-            ...p, 
-            points: 0, 
-            wins: 0, 
-            draws: 0, 
-            sb: 0 
-        }));
-        
-        // 2. Calcular Puntos y Victorias (Básico)
+        let standings = appData.players.map(p => ({ ...p, points: 0, buchholz: 0 }));
         appData.matches.forEach(m => {
-            if (!m.result) return;
-            const p1 = standings.find(pl => pl.id === m.player1Id);
-            const p2 = standings.find(pl => pl.id === m.player2Id);
-
-            if (m.result === '1-0') {
-                if(p1) { p1.points += 1; p1.wins += 1; }
-            } else if (m.result === '0-1') {
-                if(p2) { p2.points += 1; p2.wins += 1; }
-            } else if (m.result === '1/2-1/2') {
-                if(p1) { p1.points += 0.5; p1.draws += 1; }
-                if(p2) { p2.points += 0.5; p2.draws += 1; }
+            if (m.result === '1-0') { (standings.find(s => s.id === m.player1Id) || {}).points += 1; }
+            else if (m.result === '0-1') { (standings.find(s => s.id === m.player2Id) || {}).points += 1; }
+            else if (m.result === '1/2-1/2') {
+                (standings.find(s => s.id === m.player1Id) || {}).points += 0.5;
+                (standings.find(s => s.id === m.player2Id) || {}).points += 0.5;
             }
         });
-
-        // 3. Calcular Sonneborn-Berger (SB)
-        // SB = Suma(PuntosRivalDerrotado) + 0.5 * Suma(PuntosRivalEmpatado)
-        appData.matches.forEach(m => {
-            if (!m.result) return;
-            const p1 = standings.find(pl => pl.id === m.player1Id);
-            const p2 = standings.find(pl => pl.id === m.player2Id);
-            
-            // Usamos los puntos ya calculados en el paso 2
-            const p2_total_points = p2.points;
-            const p1_total_points = p1.points;
-
-            if (m.result === '1-0') {
-                p1.sb += p2_total_points;
-            } else if (m.result === '0-1') {
-                p2.sb += p1_total_points;
-            } else if (m.result === '1/2-1/2') {
-                p1.sb += (p2_total_points / 2);
-                p2.sb += (p1_total_points / 2);
-            }
-        });
-
-        // 4. Ordenar según criterios
-        standings.sort((a, b) => {
-            // 1. Puntos totales
-            if (b.points !== a.points) return b.points - a.points;
-
-            // 2. Enfrentamiento Directo (Solo si están empatados a puntos)
-            // Buscamos si A y B jugaron entre sí
-            const match = appData.matches.find(m => 
-                (m.player1Id === a.id && m.player2Id === b.id) || 
-                (m.player1Id === b.id && m.player2Id === a.id)
-            );
-
-            if (match && match.result) {
-                // Definimos puntuación en el enfrentamiento directo
-                let a_score = 0;
-                let b_score = 0;
-
-                if (match.result === '1-0') {
-                    if (match.player1Id === a.id) a_score = 1; else b_score = 1;
-                } else if (match.result === '0-1') {
-                    if (match.player2Id === a.id) a_score = 1; else b_score = 1;
-                } else if (match.result === '1/2-1/2') {
-                    a_score = 0.5; b_score = 0.5;
+        standings.forEach(p => {
+            let bh = 0;
+            appData.matches.forEach(m => {
+                let oppId = m.player1Id === p.id ? m.player2Id : (m.player2Id === p.id ? m.player1Id : -1);
+                if (oppId !== -1) {
+                    const opp = standings.find(s => s.id === oppId);
+                    if (opp) bh += opp.points;
                 }
-
-                // Si hubo un ganador claro en el directo, decidimos aquí
-                if (a_score !== b_score) return b_score - a_score;
-            }
-
-            // 3. Mayor número de victorias
-            if (b.wins !== a.wins) return b.wins - a.wins;
-
-            // 4. Sistema Sonneborn-Berger
-            if (b.sb !== a.sb) return b.sb - a.sb;
-
-            // 5. Orden alfabético
-            return a.name.localeCompare(b.name);
+            });
+            p.buchholz = bh;
         });
-
-        return standings;
+        return standings.sort((a,b) => (b.points - a.points) || (b.buchholz - a.buchholz) || a.name.localeCompare(b.name));
     }
-
-    // --- RENDERING ---
 
     function renderUI() {
-        const txtArea = document.getElementById('playersInput');
-        if (rawNamesString && txtArea.value === "") {
-            txtArea.value = rawNamesString;
-        } else if (!rawNamesString && appData.players.length > 0) {
-            rawNamesString = appData.players.map(p => p.name).join('\n');
-            txtArea.value = rawNamesString;
-        }
-
-        if (appData.started) {
-            document.getElementById('resetCard').style.display = "block";
-            renderRoundSelector();
-            renderMatches(currentRound);
-            renderRanking();
-        } else {
-            document.getElementById('resetCard').style.display = "none";
-            document.getElementById('roundSelector').innerHTML = "";
-            document.getElementById('matchesContainer').innerHTML = "<p style='text-align:center'>No hay torneo activo.</p>";
-            document.querySelector('#rankingTable tbody').innerHTML = "";
-        }
+        document.getElementById('playersInput').value = appData.players.length ? appData.players.map(p=>p.name).join('\n') : "";
+        document.getElementById('resetCard').style.display = appData.started ? "block" : "none";
+        if (appData.started) { renderRoundSelector(); renderMatches(currentRound); renderRanking(); }
     }
 
     function renderRoundSelector() {
-        const totalRounds = Math.max(...appData.matches.map(m => m.round));
         const container = document.getElementById('roundSelector');
         container.innerHTML = "";
-        
-        for (let i = 1; i <= totalRounds; i++) {
+        const rounds = [...new Set(appData.matches.map(m=>m.round))];
+        rounds.forEach(r => {
             const chip = document.createElement('div');
-            
-            let classes = ["round-chip"];
-            
-            const roundMatches = appData.matches.filter(m => m.round === i);
-            const hasResults = roundMatches.some(m => m.result !== "");
-            
-            if (hasResults) {
-                classes.push("has-results");
-            }
-            
-            if (i === currentRound) {
-                classes.push("active");
-            }
-
-            chip.className = classes.join(" ");
-            chip.innerText = `Ronda ${i}`;
-            chip.onclick = () => {
-                playTap();
-                currentRound = i;
-                renderRoundSelector();
-                renderMatches(i);
-            };
+            chip.className = `round-chip ${appData.matches.some(m=>m.round===r && m.result) ? 'has-results' : ''} ${r===currentRound ? 'active' : ''}`;
+            chip.innerText = `Ronda ${r}`;
+            chip.onclick = () => { currentRound = r; renderRoundSelector(); renderMatches(r); };
             container.appendChild(chip);
-        }
+        });
     }
 
-    function renderMatches(roundNum) {
+    function renderMatches(r) {
         const container = document.getElementById('matchesContainer');
         container.innerHTML = "";
-        const roundMatches = appData.matches.filter(m => m.round === roundNum);
-
-        if (roundMatches.length === 0) {
-            container.innerHTML = "<p>No hay partidas para esta ronda.</p>";
-            return;
-        }
-
-        roundMatches.forEach(m => {
-            const p1 = appData.players.find(p => p.id === m.player1Id);
-            const p2 = appData.players.find(p => p.id === m.player2Id);
-
-            let p1Class = "player-name white";
-            let p2Class = "player-name black";
-            let p1Text = p1.name;
-            let p2Text = p2.name;
-
-            if (m.result === '1-0') {
-                p1Class += " winner";
-                p2Class += " loser";
-            } else if (m.result === '0-1') {
-                p1Class += " loser";
-                p2Class += " winner";
-            } else if (m.result === '1/2-1/2') {
-                p1Class += " draw";
-                p2Class += " draw";
-                p1Text += " (½)";
-                p2Text += " (½)";
-            }
-
+        let mesaCount = 1;
+        appData.matches.filter(m=>m.round===r).forEach(m => {
+            const p1 = appData.players.find(p=>p.id===m.player1Id), p2 = appData.players.find(p=>p.id===m.player2Id);
             const div = document.createElement('div');
             div.className = 'match-card';
-            div.innerHTML = `
-                <div class="match-header">Ronda ${m.round} • Mesa ${parseInt(m.id.split('_')[2]) + 1}</div>
+            div.innerHTML = `<div class="match-header">Mesa ${mesaCount++}</div>
                 <div class="players">
-                    <div class="${p1Class}">♔ ${p1Text}</div>
+                    <div class="player-name ${m.result==='1-0'?'winner':m.result==='0-1'?'loser':m.result?'draw':''}">♔ ${p1.name}</div>
                     <div class="vs">vs</div>
-                    <div class="${p2Class}">${p2Text} ♚</div>
+                    <div class="player-name ${m.result==='0-1'?'winner':m.result==='1-0'?'loser':m.result?'draw':''}" style="text-align:right">${p2.name} ♚</div>
                 </div>
-                <select class="result-select editable-element" onchange="updateMatch('${m.id}', this.value)">
-                    <option value="" ${m.result === "" ? "selected" : ""}>Seleccionar resultado...</option>
-                    <option value="1-0" ${m.result === "1-0" ? "selected" : ""}>1-0 (Ganan Blancas)</option>
-                    <option value="0-1" ${m.result === "0-1" ? "selected" : ""}>0-1 (Ganan Negras)</option>
-                    <option value="1/2-1/2" ${m.result === "1/2-1/2" ? "selected" : ""}>½-½ (Tablas)</option>
-                </select>
-            `;
+                <select class="result-select editable-element" onchange="updateMatchLocal('${m.id}', this.value)">
+                    <option value="" ${!m.result?'selected':''}>Pendiente...</option>
+                    <option value="1-0" ${m.result==='1-0'?'selected':''}>Victoria Blancas (1-0)</option>
+                    <option value="0-1" ${m.result==='0-1'?'selected':''}>Victoria Negras (0-1)</option>
+                    <option value="1/2-1/2" ${m.result==='1/2-1/2'?'selected':''}>Tablas (½-½)</option>
+                </select>`;
             container.appendChild(div);
         });
     }
@@ -900,137 +255,94 @@
     function renderRanking() {
         const tbody = document.querySelector('#rankingTable tbody');
         tbody.innerHTML = "";
-        const standings = calculateRanking();
-        standings.forEach((p, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="rank-col">${index + 1}</td>
-                <td>${p.name}</td>
-                <td class="points-col">${p.points}</td>
-                <td class="sb-col">${p.sb.toFixed(1)}</td>
-            `;
-            tbody.appendChild(tr);
+        calculateRanking().forEach((p, i) => {
+            tbody.innerHTML += `<tr><td class="rank-col">${i+1}</td><td>${p.name}</td><td class="points-col">${p.points}</td><td style="text-align:right">${p.buchholz.toFixed(1)}</td></tr>`;
         });
     }
 
-    function switchTab(tabId, navItem) {
-        playTap();
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        navItem.classList.add('active');
+    function updateMatchLocal(id, res) { 
+        const m = appData.matches.find(x=>x.id===id); 
+        if (m) m.result = res; 
+        renderMatches(currentRound); 
+        renderRoundSelector(); 
+    }
 
-        if (tabId === 'tab-ranking') {
-            renderRanking();
+    function showLoading(t) { document.getElementById('loadingText').innerText = t; document.getElementById('loadingOverlay').style.display = "flex"; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = "none"; }
+    function showToast(m) { const x = document.getElementById("toast"); x.innerText = m; x.className = "show"; setTimeout(()=>x.className="", 3000); }
+    function openPasswordModal() { if(isAdmin){ isAdmin=false; updateAdminMode(); } else document.getElementById('pwdModal').style.display="flex"; }
+    function closePasswordModal() { document.getElementById('pwdModal').style.display="none"; }
+    function checkPassword() { if(document.getElementById('pwdInput').value===ADMIN_PASS){ isAdmin=true; closePasswordModal(); updateAdminMode(); showToast("🔓 Acceso concedido"); } else { showToast("❌ Contraseña incorrecta"); } document.getElementById('pwdInput').value=""; }
+    function updateAdminMode() { const b = document.getElementById('adminBtn'); b.innerHTML = isAdmin?"🔓":"🔒"; b.className = isAdmin?"unlocked":""; document.body.className = isAdmin?"":"is-locked"; }
+    function switchTab(id, el) { 
+        document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active')); document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); el.classList.add('active');
+        if(id==='tab-ranking') renderRanking();
+    }
+    function confirmStartTournament() { if(!isAdmin) return; openConfirmModal("Configurar Torneo", "¿Deseas generar el calendario con estos jugadores? Se perderán los datos actuales.", "start"); }
+    function confirmResetTournament() { if(!isAdmin) return; openConfirmModal("¡ATENCIÓN!", "¿Seguro que quieres borrar todo el torneo? Esta acción no se puede deshacer.", "reset"); }
+    function openConfirmModal(t, m, a) { document.getElementById('confirmTitle').innerText=t; document.getElementById('confirmMessage').innerText=m; pendingAction=a; document.getElementById('confirmModal').style.display="flex"; }
+    
+    function generateRoundRobin(players) {
+        const n = players.length;
+        const isOdd = n % 2 !== 0;
+        const tempPlayers = isOdd ? [...players, { id: -1, name: "BYE" }] : [...players];
+        const numPlayers = tempPlayers.length;
+        const numRounds = numPlayers - 1;
+        const matchesPerRound = numPlayers / 2;
+        let matches = [];
+
+        for (let round = 1; round <= numRounds; round++) {
+            for (let i = 0; i < matchesPerRound; i++) {
+                const p1 = tempPlayers[i];
+                const p2 = tempPlayers[numPlayers - 1 - i];
+                if (p1.id !== -1 && p2.id !== -1) {
+                    matches.push({
+                        id: `m_${round}_${i}`,
+                        round: round,
+                        player1Id: round % 2 === 0 ? p2.id : p1.id,
+                        player2Id: round % 2 === 0 ? p1.id : p2.id,
+                        result: ""
+                    });
+                }
+            }
+            tempPlayers.splice(1, 0, tempPlayers.pop());
         }
+        return matches;
     }
 
-    function showToast(message) {
-        const x = document.getElementById("toast");
-        x.innerText = message;
-        x.className = "show";
-        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    function closeConfirmModal(c) { 
+        document.getElementById('confirmModal').style.display="none"; 
+        if(c && pendingAction === 'start') {
+            const names = document.getElementById('playersInput').value.split('\n').filter(x => x.trim());
+            if(names.length < 2) { showToast("Mínimo 2 jugadores"); return; }
+            const players = names.map((name, index) => ({ id: index + 1, name: name }));
+            const matches = generateRoundRobin(players);
+            sendGoogleAction('create', { players: players, matches: matches });
+        }
+        if(c && pendingAction === 'reset') sendGoogleAction('reset');
     }
 
-    // --- PDF LOGIC ---
     function downloadPDF() {
-        playTap();
-        
-        if (!appData.started) {
-            showToast("No hay datos para exportar");
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const margin = 15;
-        let y = 20;
-
-        doc.setFontSize(18);
-        doc.setTextColor(44, 62, 80);
-        doc.text("Ajedrez Siurot - Torneo 2026", margin, y);
-        y += 10;
+        const { jsPDF } = window.jspdf; const doc = new jsPDF();
+        doc.setFontSize(18); doc.text("Clasificación Final - Ajedrez Siurot", 15, 20);
+        doc.setFontSize(10); doc.text("Fecha: " + new Date().toLocaleDateString(), 15, 28);
+        let y = 40;
         doc.setFontSize(12);
-        doc.setTextColor(100);
-        const date = new Date().toLocaleDateString('es-ES');
-        doc.text(`Fecha de impresión: ${date}`, margin, y);
-        y += 15;
-
-        doc.setFontSize(14);
-        doc.setTextColor(0);
-        doc.text("Clasificación Actual", margin, y);
+        doc.text("#   Jugador                     Pts     BH", 15, y);
+        doc.line(15, y+2, 195, y+2);
         y += 10;
-
-        const standings = calculateRanking();
-        const col1 = margin;
-        const col2 = margin + 40;
-        const col3 = pageWidth - margin - 10;
-        const col4 = pageWidth - margin - 40;
-
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
-        doc.text("#", col1, y);
-        doc.text("Jugador", col2, y);
-        doc.text("Puntos", col3, y, { align: "right" });
-        doc.text("S-B", col4, y, { align: "right" });
-        y += 7;
-
-        doc.setFont("helvetica", "normal");
-        standings.forEach((p, i) => {
-            if (y > 270) { doc.addPage(); y = 20; }
-            doc.text(`${i + 1}`, col1, y);
-            doc.text(p.name, col2, y);
-            doc.text(`${p.points}`, col3, y, { align: "right" });
-            doc.text(p.sb.toFixed(1), col4, y, { align: "right" });
-            y += 7;
+        calculateRanking().forEach((p, i) => { 
+            const pos = (i+1).toString().padEnd(4);
+            const name = p.name.padEnd(25);
+            const pts = p.points.toString().padEnd(8);
+            const bh = p.buchholz.toFixed(1);
+            doc.text(`${pos} ${name} ${pts} ${bh}`, 15, y); 
+            y+=8; 
+            if(y > 280) { doc.addPage(); y = 20; }
         });
-
-        y += 15;
-        doc.addPage(); 
-
-        doc.setFontSize(14);
-        doc.text("Resultados por Ronda", margin, y);
-        y += 10;
-
-        const totalRounds = Math.max(...appData.matches.map(m => m.round));
-        const sortedMatches = [...appData.matches].sort((a,b) => {
-            if (a.round !== b.round) return a.round - b.round;
-            return a.id.localeCompare(b.id);
-        });
-
-        for (let r = 1; r <= totalRounds; r++) {
-            if (y > 250) { doc.addPage(); y = 20; }
-            
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "bold");
-            doc.text(`Ronda ${r}`, margin, y);
-            y += 8;
-
-            const roundMatches = sortedMatches.filter(m => m.round === r);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-
-            roundMatches.forEach(m => {
-                if (y > 270) { doc.addPage(); y = 20; }
-                
-                const p1 = appData.players.find(p => p.id === m.player1Id);
-                const p2 = appData.players.find(p => p.id === m.player2Id);
-                const res = m.result ? m.result : "Pendiente";
-
-                const line = `${p1.name} vs ${p2.name} [${res}]`;
-                const splitText = doc.splitTextToSize(line, pageWidth - (margin * 2));
-                doc.text(splitText, margin, y);
-                y += (splitText.length * 5) + 2;
-            });
-            y += 5;
-        }
-
-        doc.save("Resultado_Torneo_Siurot.pdf");
-        showToast("PDF generado y descargado");
+        doc.save("Clasificacion_Ajedrez_Siurot.pdf");
     }
 </script>
-
 </body>
 </html>
