@@ -80,7 +80,7 @@
 <div id="loadingOverlay"><div class="spinner"></div><div id="loadingText">Conectando...</div></div>
 <header>
     <div class="header-text"><h1>Ajedrez Siurot</h1><div class="subtitle">Torneo CEIP Manuel Siurot 2026</div></div>
-    <button id="adminBtn" onclick="openPasswordModal()">🔒</button>
+    <button id="adminBtn" onclick="playTap(); openPasswordModal()">🔒</button>
 </header>
 <div class="container">
     <div id="tab-setup" class="tab-content active">
@@ -88,11 +88,11 @@
             <h3>1. Registro de Jugadores</h3><p>Introduce un nombre por línea. El sistema generará el calendario automáticamente.</p>
             <div class="lock-overlay">🔒 Modo lectura: Pulsa el candado para editar</div>
             <textarea id="playersInput" class="editable-element" placeholder="Ejemplo:&#10;Juan Pérez&#10;María García..."></textarea>
-            <button class="editable-element" onclick="confirmStartTournament()">Crear / Actualizar Torneo</button>
+            <button class="editable-element" onclick="playTap(); confirmStartTournament()">Crear / Actualizar Torneo</button>
         </div>
         <div class="card show-lock-msg" id="resetCard" style="display:none;">
             <h3>Zona de Administración</h3><div class="lock-overlay">🔒 Zona protegida</div>
-            <button class="editable-element danger" onclick="confirmResetTournament()">Borrar Todo el Torneo</button>
+            <button class="editable-element danger" onclick="playTap(); confirmResetTournament()">Borrar Todo el Torneo</button>
         </div>
     </div>
     <div id="tab-rounds" class="tab-content">
@@ -100,7 +100,7 @@
         <div id="matchesContainer"></div>
         <div class="card show-lock-msg" style="padding: 0; background: transparent; box-shadow: none;">
              <div class="lock-overlay">🔒 Desbloquea para guardar cambios</div>
-             <button id="saveBtn" class="editable-element" onclick="syncToGoogle()">Guardar resultados de la ronda</button>
+             <button id="saveBtn" class="editable-element" onclick="playTap(); syncToGoogle()">Guardar resultados de la ronda</button>
         </div>
     </div>
     <div id="tab-ranking" class="tab-content">
@@ -116,29 +116,36 @@
         <div class="card">
             <h3>Panel de Exportación</h3>
             <p>Descarga los documentos oficiales del torneo.</p>
-            <button class="export" onclick="downloadPDF()">⬇️ Descargar Clasificación</button>
-            <button class="export" style="background-color: var(--primary); margin-top: 15px;" onclick="downloadMatchesPDF()">📅 Descargar Emparejamientos</button>
+            <button class="export" onclick="playTap(); downloadPDF()">⬇️ Descargar Clasificación</button>
+            <button class="export" style="background-color: var(--primary); margin-top: 15px;" onclick="playTap(); downloadMatchesPDF()">📅 Descargar Emparejamientos</button>
         </div>
     </div>
 </div>
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('tab-setup', this)"><span class="nav-icon">⚙️</span>Config</div>
-    <div class="nav-item" onclick="switchTab('tab-rounds', this)"><span class="nav-icon">📅</span>Rondas</div>
-    <div class="nav-item" onclick="switchTab('tab-ranking', this)"><span class="nav-icon">🏆</span>Ranking</div>
-    <div class="nav-item" onclick="switchTab('tab-export', this)"><span class="nav-icon">📄</span>PDF</div>
+    <div class="nav-item active" onclick="playTap(); switchTab('tab-setup', this)"><span class="nav-icon">⚙️</span>Config</div>
+    <div class="nav-item" onclick="playTap(); switchTab('tab-rounds', this)"><span class="nav-icon">📅</span>Rondas</div>
+    <div class="nav-item" onclick="playTap(); switchTab('tab-ranking', this)"><span class="nav-icon">🏆</span>Ranking</div>
+    <div class="nav-item" onclick="playTap(); switchTab('tab-export', this)"><span class="nav-icon">📄</span>PDF</div>
 </div>
-<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle"></h3><p id="confirmMessage"></p><div class="modal-buttons"><button onclick="closeConfirmModal(false)">Cancelar</button><button id="confirmActionBtn" onclick="closeConfirmModal(true)">Confirmar</button></div></div></div>
+<div id="confirmModal" class="modal"><div class="modal-content"><h3 id="confirmTitle"></h3><p id="confirmMessage"></p><div class="modal-buttons"><button onclick="playTap(); closeConfirmModal(false)">Cancelar</button><button id="confirmActionBtn" onclick="playTap(); closeConfirmModal(true)">Confirmar</button></div></div></div>
 <div id="pwdModal" class="modal">
     <div class="modal-content">
         <h3>Acceso Administrador</h3>
         <input type="password" id="pwdInput" placeholder="Contraseña">
-        <button onclick="checkPassword()">Entrar</button>
-        <button onclick="closePasswordModal()">Cancelar</button>
+        <button onclick="playTap(); checkPassword()">Entrar</button>
+        <button onclick="playTap(); closePasswordModal()">Cancelar</button>
     </div>
 </div>
 <div id="toast"></div>
 
 <script>
+    // CONFIGURACIÓN DE AUDIO TAP
+    const tapAudio = new Audio('https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Tap.mp3');
+    function playTap() {
+        tapAudio.currentTime = 0;
+        tapAudio.play().catch(e => console.log("Audio bloqueado hasta interacción"));
+    }
+
     // Registro del Service Worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -164,7 +171,6 @@
         const savedHash = localStorage.getItem('siurot_page_hash');
         
         if (savedHash && savedHash !== currentHash) {
-            console.log("Detectado cambio en el código. Forzando limpieza...");
             localStorage.clear();
             localStorage.setItem('siurot_page_hash', currentHash);
             const cleanUrl = window.location.origin + window.location.pathname + "?u=" + Date.now();
@@ -182,7 +188,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         fetchFromGoogle();
         document.getElementById('pwdInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPassword();
+            if (e.key === 'Enter') { playTap(); checkPassword(); }
         });
     });
 
@@ -212,7 +218,7 @@
             const data = await res.json();
             if (data.status === 'success') { 
                 appData = data.db; 
-                showToast("✅ Resultados guardados con éxito"); 
+                showToast("✅ Guardado con éxito"); 
                 renderUI(); 
             }
         } catch (e) { showToast("❌ Error al guardar. Inténtalo de nuevo."); }
@@ -282,7 +288,7 @@
             const chip = document.createElement('div');
             chip.className = `round-chip ${appData.matches.some(m=>m.round===r && m.result) ? 'has-results' : ''} ${r===currentRound ? 'active' : ''}`;
             chip.innerText = `Ronda ${r}`;
-            chip.onclick = () => { currentRound = r; renderRoundSelector(); renderMatches(r); };
+            chip.onclick = () => { playTap(); currentRound = r; renderRoundSelector(); renderMatches(r); };
             container.appendChild(chip);
         });
     }
@@ -301,7 +307,7 @@
                     <div class="vs">vs</div>
                     <div class="player-name ${m.result==='0-1'?'winner':m.result==='1-0'?'loser':m.result?'draw':''}" style="text-align:right">${p2.name} ♚</div>
                 </div>
-                <select class="result-select editable-element" onchange="updateMatchLocal('${m.id}', this.value)">
+                <select class="result-select editable-element" onchange="playTap(); updateMatchLocal('${m.id}', this.value)">
                     <option value="" ${!m.result?'selected':''}>Pendiente...</option>
                     <option value="1-0" ${m.result==='1-0'?'selected':''}>Victoria Blancas (1-0)</option>
                     <option value="0-1" ${m.result==='0-1'?'selected':''}>Victoria Negras (0-1)</option>
